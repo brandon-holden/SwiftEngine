@@ -1,4 +1,5 @@
 import Foundation
+import class SECommon.FileManager
 import SEProcessorLib
 
 func main(){
@@ -17,7 +18,7 @@ func main(){
         SEGlobals.SECORE_LOCATION = seCoreLocation
     }
     
-    let seRoute = SERoute()
+    let seRoute = SERoute(fileManager: FileManager())
     let seResponse = SEResponse()
     if seRoute.doesRouterExist() {
         

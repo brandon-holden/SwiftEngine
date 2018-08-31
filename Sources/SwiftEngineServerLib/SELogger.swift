@@ -7,6 +7,7 @@
 
 import Foundation
 import NIOHTTP1
+import SECommon
 
 
 public class SELogger {
@@ -23,10 +24,10 @@ public class SELogger {
     }
     
     // FileHandle for dependency injection
-    public static var fileHandle: SEFileHandleProtocol = SEFileHandle()
+    public static var fileHandle: FileHandleProtocol = SECommon.FileHandle()
     
     // FileManager for dependency injection
-    public static var fileManager: SEFileManagerProtocol = SEFileManager()
+    public static var fileManager: FileManagerProtocol = SECommon.FileManager()
     
     public static let defaultLogLevel: LogLevel = LogLevel.error
     public static var maxLogSize = 10_000_000
@@ -57,7 +58,7 @@ public class SELogger {
         let headers = components[0]
         let responseLine = headers.components(separatedBy: .newlines)[0]
         
-        guard responseLine.count > 1 else {
+        guard responseLine.contains(" ") else {
             SELogger.logUnexpectedCrash("Could not get response code. StdOut: \(stdOut)")
             return
         }

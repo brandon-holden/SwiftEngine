@@ -1,5 +1,7 @@
 
 import Foundation
+import SECommon
+import class SECommon.FileManager
 
 public enum ExcutableType {
   case notFound
@@ -7,22 +9,27 @@ public enum ExcutableType {
   case staticFile
 }
 
+
 public class SERoute {
-    public init(directory: String) {
+    
+    let fileManger: FileManagerProtocol
+    
+    public init(fileManager: FileManagerProtocol, directory: String) {
+        self.fileManger = fileManager
         SEGlobals.DOCUMENT_ROOT = directory
     }
 
-    public init() {
-
+    public init(fileManager: FileManagerProtocol) {
+        self.fileManger = fileManager
     }
 
     public func doesRouterExist() -> Bool {
         let routerPath = "\(SEGlobals.DOCUMENT_ROOT)/Router.swift"
-        return SECommon.checkExitsFile(filePath: routerPath)
+        return self.fileManger.fileExists(atPath: routerPath)
     }
 
     public func getExecutableType(_ requestFile: String) -> (ExcutableType, String) {
-        let excutePath = SEGlobals.DOCUMENT_ROOT + requestFile
+        let excutePath = "\(SEGlobals.DOCUMENT_ROOT)/\(requestFile)"
         if requestFile.range(of: ".") != nil {
             let fileExtension = requestFile.components(separatedBy: ".")[1]
       
@@ -40,13 +47,13 @@ public class SERoute {
             for i in 1..<paths.count {
                 tempPath += "/\(paths[i])"
                 let path = "\(tempPath).swift"
-                if SECommon.checkExitsFile(filePath: path) {
+                if self.fileManger.fileExists(atPath: path) {
                     return (.swift, path)
                 }
             }
           
             let path = SEGlobals.DOCUMENT_ROOT + requestFile + "/default.swift"
-            if SECommon.checkExitsFile(filePath: path) {
+            if self.fileManger.fileExists(atPath: path) {
                 return (.swift, path)
             }
         }

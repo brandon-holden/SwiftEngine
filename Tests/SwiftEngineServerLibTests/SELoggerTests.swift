@@ -7,10 +7,11 @@
 
 import XCTest
 import NIOHTTP1
+import SECommon
 @testable import SwiftEngineServerLib
 
 
-private final class SEFileManagerTestUtil: SEFileManagerProtocol {
+private final class FileManagerTestUtil: FileManagerProtocol {
     public func fileExists(atPath path: String) -> Bool {
         return true
     }
@@ -22,7 +23,7 @@ private final class SEFileManagerTestUtil: SEFileManagerProtocol {
     }
 }
 
-private final class SEFileHandleTestUtil: SEFileHandleProtocol {
+private final class FileHandleTestUtil: FileHandleProtocol {
 
     var writeData: Data?
     var filePath: String?
@@ -30,7 +31,7 @@ private final class SEFileHandleTestUtil: SEFileHandleProtocol {
     func open(atPath path: String) throws {
         // Ensure no other file is open
         guard self.filePath == nil else {
-            throw SECommon.RuntimeError("This instance already has a file handle open. Can't open new file at path: \(path)")
+            throw RuntimeError("This instance already has a file handle open. Can't open new file at path: \(path)")
         }
         
         // Set instance var
@@ -38,25 +39,25 @@ private final class SEFileHandleTestUtil: SEFileHandleProtocol {
         
         // Throw error if we could not open the file
         guard self.filePath != nil else {
-            throw SECommon.RuntimeError("Could not open file at path: \(path)")
+            throw RuntimeError("Could not open file at path: \(path)")
         }
     }
 
     func seekToEndOfFile() throws -> UInt64 {
         guard self.filePath != nil else {
-            throw SECommon.RuntimeError("There is no file path set")
+            throw RuntimeError("There is no file path set")
         }
         return 4221994
     }
     func write(_ data: Data) throws {
         guard self.filePath != nil else {
-            throw SECommon.RuntimeError("There is no file path set")
+            throw RuntimeError("There is no file path set")
         }
         self.writeData = data
     }
     func closeFile() throws {
         guard self.filePath != nil else {
-            throw SECommon.RuntimeError("There is no file path set")
+            throw RuntimeError("There is no file path set")
         }
         self.filePath = nil
     }
@@ -66,15 +67,12 @@ class SELoggerTest: XCTestCase {
     
     
     override func setUp() {
-        SELogger.fileManager = SEFileManagerTestUtil()
+        SELogger.fileManager = FileManagerTestUtil()
     }
     
-    override func tearDown() {
-        
-    }
     
     func testGoodAccess() {
-        let fh = SEFileHandleTestUtil()
+        let fh = FileHandleTestUtil()
         SELogger.fileHandle = fh
         
         let ip = "127.0.0.1"
@@ -97,7 +95,7 @@ class SELoggerTest: XCTestCase {
     
     
     func testBadAccess() {
-        let fh = SEFileHandleTestUtil()
+        let fh = FileHandleTestUtil()
         SELogger.fileHandle = fh
         
         let ip = "127.0.0.1"
@@ -120,7 +118,7 @@ class SELoggerTest: XCTestCase {
     
     
     func testGoodAccessPost() {
-        let fh = SEFileHandleTestUtil()
+        let fh = FileHandleTestUtil()
         SELogger.fileHandle = fh
         
         let ip = "127.0.0.1"
@@ -143,7 +141,7 @@ class SELoggerTest: XCTestCase {
     
     
     func testImproperFormat() {
-        let fh = SEFileHandleTestUtil()
+        let fh = FileHandleTestUtil()
         SELogger.fileHandle = fh
         
         let ip = "127.0.0.1"
@@ -166,7 +164,7 @@ class SELoggerTest: XCTestCase {
     
     
     func testGoodAccessLongQuery() {
-        let fh = SEFileHandleTestUtil()
+        let fh = FileHandleTestUtil()
         SELogger.fileHandle = fh
         
         let ip = "127.0.0.1"

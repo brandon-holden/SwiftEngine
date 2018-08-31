@@ -23,7 +23,12 @@ public class SECompiler {
     static let entryPointFilename = "default"
     
     static var fullExecutablePath: String {
-        return "\(SECompiler.binaryCompilationLocation)\(SECompiler.relativePath!)/\(SECompiler.executableName!)"
+        if SECompiler.relativePath == "/" {
+            return "\(SECompiler.binaryCompilationLocation)\(SECompiler.relativePath!)\(SECompiler.executableName!)"
+        }
+        else {
+            return "\(SECompiler.binaryCompilationLocation)\(SECompiler.relativePath!)/\(SECompiler.executableName!)"
+        }
     }
     
     static var requireList: Set<String> = []
@@ -49,7 +54,7 @@ public class SECompiler {
 
     class func dump(_ str: String, _ doExit: Bool = false){
         print(str)
-        if(doExit){
+        if (doExit) {
             exit(0)
         }
     }
@@ -402,11 +407,16 @@ extension SECompiler {
     }
     
     
-    private class func setPathComponents(forPath path: String) {
+    public class func setPathComponents(forPath path: String) {
         // Get executable name and relative path
         if let filename = path.components(separatedBy: "/").last, let execName = filename.components(separatedBy: ".").first {
             SECompiler.executableName = execName
-            SECompiler.relativePath = String(path.dropFirst(SEGlobals.DOCUMENT_ROOT.count).dropLast("/\(filename)".count))
+            var path = String(path.dropFirst(SEGlobals.DOCUMENT_ROOT.count).dropLast("\(filename)".count))
+            // Ensure it starts with a '/' but does not end with a '/'
+            if let last = path.last, last == "/", path.count > 1 {
+                path = String(path.dropLast())
+            }
+            SECompiler.relativePath = path
         }
         else {
             // Could not get path componenets, can't proceed

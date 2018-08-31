@@ -1,6 +1,6 @@
 //
-//  SECompilerTests.swift
-//  SEProcessorTests
+//  SECompilerTests
+//  SEProcessorLibTests
 //
 //  Created by Brandon Holden on 8/29/18.
 //
@@ -11,15 +11,11 @@ import XCTest
 
 
 
-class SECompilerTest: XCTestCase {
+class SECompilerRequireTests: XCTestCase {
     
-    override func setUp() {
-        
-    }
-    
-    override func tearDown() {
-        
-    }
+    //
+    // getRequiredFile tests
+    //
     
     // Proper require syntax
     func testStandardRequire() {
@@ -110,5 +106,34 @@ class SECompilerTest: XCTestCase {
         let line = ""
         XCTAssertNil(SECompiler.getRequiredFile(line))
     }
+    
+    
+    
+    //
+    // setPathComponents tests
+    //
+    
+    // Test setting the path components with a root level executable
+    func testValidPath() {
+        SEGlobals.DOCUMENT_ROOT = "/var/swiftengine/www"
+        let path = "\(SEGlobals.DOCUMENT_ROOT)/default.swift"
+        SECompiler.setPathComponents(forPath: path)
+        XCTAssertEqual(SECompiler.executableName, "default")
+        XCTAssertEqual(SECompiler.relativePath, "/")
+        XCTAssertEqual(SECompiler.fullExecutablePath, "\(SECompiler.binaryCompilationLocation)/default")
+    }
+    
+    
+    // Test setting the path components with a full path
+    func testValidLongPath() {
+        SEGlobals.DOCUMENT_ROOT = "/var/swiftengine/www"
+        let path = "\(SEGlobals.DOCUMENT_ROOT)/people/users/default.swift"
+        SECompiler.setPathComponents(forPath: path)
+        XCTAssertEqual(SECompiler.executableName, "default")
+        XCTAssertEqual(SECompiler.relativePath, "/people/users")
+        XCTAssertEqual(SECompiler.fullExecutablePath, "\(SECompiler.binaryCompilationLocation)/people/users/default")
+    }
+
+    
     
 }

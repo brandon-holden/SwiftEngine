@@ -22,17 +22,20 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
+            name: "SECommon",
+            dependencies: []),
+        .target(
             name: "SwiftEngineServer",
             dependencies: ["SwiftEngineServerLib", "NIO", "NIOHTTP1"]),
         .target(
             name: "SwiftEngineServerLib",
-            dependencies: ["NIO", "NIOHTTP1", "NIOFoundationCompat"]),
+            dependencies: ["NIO", "NIOHTTP1", "NIOFoundationCompat", "SECommon"]),
         .target(
             name: "SEProcessor",
             dependencies: ["SEProcessorLib"]),
 		.target(
 			name: "SEProcessorLib",
-			dependencies: []),
+			dependencies: ["SECommon"]),
 
         .testTarget(
             name: "SwiftEngineServerLibTests",
@@ -40,8 +43,5 @@ let package = Package(
         .testTarget(
             name: "SEProcessorLibTests",
             dependencies: ["SwiftEngineServer", "SEProcessorLib"]),
-        .testTarget(
-            name: "SEProcessorTests",
-            dependencies: ["SwiftEngineServer"]),
     ]
 )

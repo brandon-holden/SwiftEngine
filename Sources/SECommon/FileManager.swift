@@ -8,21 +8,21 @@
 import Foundation
 
 
-public protocol SEFileManagerProtocol {
+public protocol FileManagerProtocol {
     func fileExists(atPath path: String) -> Bool
     func contentsOfDirectory(atPath path: String) throws -> [String]
     func moveItem(atPath: String, toPath: String) throws
 }
 
-class SEFileManager: SEFileManagerProtocol {
+public class FileManager: FileManagerProtocol {
     public init() {}
     public func fileExists(atPath path: String) -> Bool {
-        return FileManager.default.fileExists(atPath: path)
+        return Foundation.FileManager.default.fileExists(atPath: path)
     }
     public func contentsOfDirectory(atPath path: String) throws -> [String] {
-        return try FileManager.default.contentsOfDirectory(atPath: path)
+        return try Foundation.FileManager.default.contentsOfDirectory(atPath: path)
     }
     public func moveItem(atPath: String, toPath: String) throws {
-        try FileManager.default.moveItem(atPath: atPath, toPath: toPath)
+        try Foundation.FileManager.default.moveItem(atPath: atPath, toPath: toPath)
     }
 }
